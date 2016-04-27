@@ -1,0 +1,6 @@
+{
+  "redis_url" : "192.168.99.100:6379"
+  "redis_pw" : "",
+  "redis_db" : 0,
+  "clair_api_url": ""
+}
