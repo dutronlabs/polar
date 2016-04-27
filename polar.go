@@ -57,7 +57,6 @@ func redisClient() (*redis.Client) {
 
 func main(){
     router := gin.Default()
-    router.LoadHTMLGlob("templates/*")
     client := redisClient()
     defer client.Close()
     // initialize the model here if this is a new instance... we should be able to check to make sure we can connect to redis
@@ -78,13 +77,12 @@ func main(){
         api.GET("/containers", func(c *gin.Context) {
 	    client := redisClient()
 	    defer client.Close()
-	    containers := client.LRange("containers", 0, 1).Val()
+	    containers := client.LRange("containers", 0, -1).Val()
             c.JSON(http.StatusOK, containers)
         })
 
 
         // POST /api/v1/containers -d { "name" : <container name>, "version" : "<container version>", "src" : "<container URL>" }
-
         api.POST("/containers", func(c *gin.Context){
 	    var ct Container
             if c.Bind(&ct) == nil {
@@ -123,12 +121,6 @@ func main(){
             c.JSON(http.StatusOK, "{ x : list of vulnerabilities}")
         })
     }
-
-    router.GET("/scans", func(c *gin.Context){
-        c.HTML(http.StatusOK, "index.tmpl", gin.H{
-            "title":"scans",
-        })
-    })
 
     router.Run(":9001")
 }
